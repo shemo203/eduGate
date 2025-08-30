@@ -21,10 +21,13 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///my_database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+with app.app_context():
+    db.create_all()
 
 login_manager = LoginManager()
 login_manager.login_view= "login"
@@ -125,10 +128,11 @@ def load_user(user_key):
         return Admin.query.get(int(user_id))
     return None
 
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+OUTPUT_FOLDER = os.path.join(os.path.dirname(__file__), 'outputs')
 
-UPLOAD_FOLDER = 'uploads'
-OUTPUT_FOLDER = 'outputs'
-
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 @app.route("/", methods=['GET','POST'])
 def landing():
