@@ -10,60 +10,33 @@ def create_mock_data():
         
         # Create mock students
         students = [
-            Student(name="John Smith"),
-            Student(name="Emma Johnson"),
-            Student(name="Michael Brown"),
-            Student(name="Sarah Davis"),
-            Student(name="David Wilson")
+            Student(username="john", name="John Smith"),
+            Student(username="emma", name="Emma Johnson"),
+            Student(username="michael", name="Michael Brown"),
+            Student(username="sarah", name="Sarah Davis"),
+            Student(username="david", name="David Wilson")
         ]
+        for student in students:
+            student.set_password("testpass")  # All students have the same password for testing
         
         # Create mock admins
         admins = [
-            Admin(name="Dr. Robert Anderson"),
-            Admin(name="Prof. Lisa Martinez"),
-            Admin(name="Dr. James Thompson")
-        ]
-    
-        # Create mock documents
-        documents = [
-            Document(file_type="pdf", size=1024),
-            Document(file_type="pdf", size=2048),
-            Document(file_type="pdf", size=3072),
-            Document(file_type="pdf", size=4096),
-            Document(file_type="pdf", size=5120)
+            Admin(username="robert", name="Dr. Robert Anderson"),
+            Admin(username="lisa", name="Prof. Lisa Martinez"),
+            Admin(username="james", name="Dr. James Thompson")
         ]
         
-        # Create mock submissions
-        courses = ["Python Programming", "Data Structures", "Web Development", "Database Systems", "Machine Learning"]
-        submissions = []
-        
-        # Generate submissions for each student
-        for student in students:
-            # Each student gets 2-4 submissions
-            num_submissions = random.randint(2, 4)
-            for _ in range(num_submissions):
-                submission = Submission(
-                    created_at=datetime.utcnow() - timedelta(days=random.randint(1, 30)),
-                    score=random.uniform(60.0, 100.0),
-                    course_name=random.choice(courses),
-                    student=student,
-                    admin=random.choice(admins),
-                    documents=[random.choice(documents)]
-                )
-                submissions.append(submission)
+        for admin in admins:
+            admin.set_password("adminpass")  # All admins have
         
         db.session.add_all(students)
         db.session.add_all(admins)
-        db.session.add_all(documents)
-        db.session.add_all(submissions)
     
         db.session.commit()
         
         print("Mock data created successfully!")
         print(f"Created {len(students)} students")
         print(f"Created {len(admins)} admins")
-        print(f"Created {len(documents)} documents")
-        print(f"Created {len(submissions)} submissions")
 
 def view_mock_data():
     """View all data in the database"""

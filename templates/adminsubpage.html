@@ -7,46 +7,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
   </head>
+    {% include 'navbar.html' %}
 
-  
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container">
-        <a class="navbar-brand" href="/">eduGate</a>
-        <div>
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex flex-row gap-3">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/adminsubmissions">Submissions</a>
-            </li>
-          </ul>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} mt-2" role="alert">
+          {{ message }}
         </div>
-      </div>
-    </nav>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 
     <div class="container">
+
+      <div class="container mt-4">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4>Create New Submission</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="course_name" class="form-label">Course Name</label>
+                <input type="text" class="form-control" id="course_name" name="course_name" required>
+              </div>
+              <div class="mb-3">
+                <label for="student_ids" class="form-label">Assign to Students</label>
+                <select class="form-control" id="student_ids" name="student_ids" multiple required>
+                  {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.name }} (ID: {{ student.id }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="student_id" class="form-label">Deadline</label>
+                <input type="datetime-local" id ="deadline" name="deadline" required> <!--replace with datepicker -->
+              </div>
+              <div class="mb-3">
+                <label for="file" class="form-label">Attach File (optional)</label>
+                <input class="form-control" type="file" id="file" name="file">
+              </div>
+              <button type="submit" class="btn btn-primary">Create Submission</button>
+            </form>
+          </div>
+        </div>
+      </div>
+         <br>
+         <br>
+         <br>
+         <br>
+
         <h2 class="mb-4">All Submissions</h2>
         {% if submissions %}
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th>Course</th>
                   <th>Submission ID</th>
-                  <th>Student</th>
-                  <th>Created At</th>
-                  <th>Score</th>
-                  <th>AI Status</th>
+                  <th>Student Name</th>
+                  <th>Submitted</th>
+                  <th>Human Score</th>
+                  <th>Attached files</th>
+                  
                 </tr>
               </thead>
               <tbody>
                 {% for sub in submissions %}
                   <tr>
-                    <td>{{ sub.submissionID }}</td>
-                    <td>{{ sub.student_name }}</td>
-                    <td>{{ sub.created_at }}</td>
+                    <td>{{ sub.course_name }}</td>
+                    <td>{{ sub.id }}</td>
+                    <td>{{ sub.student.name }}</td>
+                    <td>
+                        {% if sub.documents|length > 0 %}
+                          <span class="badge bg-success" style="font-size:1em;">Yes</span>
+                        {% else %}
+                          <span class="badge bg-danger" style="font-size:1em;">No</span>
+                        {% endif %}
+    
+                    </td>
                     <td>{{ sub.score }}</td>
-                    <td>{{ sub.AIstatus }}</td>
+                    <td>
+                      {% if sub.documents|length > 0 %}
+                        {% for doc in sub.documents %}
+                          {% if doc.file_name %}
+                            <a href="{{ url_for('uploaded_file', filename=doc.file_name) }}" target="_blank">
+                              {{ doc.file_name }}
+                            </a>
+                            <br>
+                          {% else %}
+                            <span class="text-muted">-</span>
+                            <br>
+                          {% endif %}
+                        {% endfor %}
+                      {% else %}
+                        <span class="text-muted">-</span>
+                      {% endif %}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
