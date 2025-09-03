@@ -167,6 +167,7 @@ def login():
                     return redirect(url_for('login'))
         except Exception as e:
             flash (f"An error occured: {str(e)}", "danger")
+            return redirect(url_for('login'))
 
     else:
         return render_template("loginpage.html")
