@@ -1,5 +1,6 @@
-.env
+instance/
+uploads/
+outputs/
 __pycache__/
 *.pyc
-instance/
-.env.*
+.env

@@ -5,6 +5,7 @@ from transformers import pipeline
 import pymupdf
 import requests
 from gradio_client import Client
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from datetime import datetime, timezone
@@ -21,13 +22,11 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///my_database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///edugate')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
-with app.app_context():
-    db.create_all()
+migrate = Migrate(app, db)
 
 login_manager = LoginManager()
 login_manager.login_view= "login"
@@ -406,11 +405,6 @@ def analyze_text(text):
 		text,
 		api_name="/predict_en3")
     return result
-
-
-def send_to_teacher():
-
-    return None
 
 
 if __name__ == "__main__":

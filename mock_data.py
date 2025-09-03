@@ -4,10 +4,6 @@ import random
 
 def create_mock_data():
     with app.app_context():
-        # Clear existing data
-        db.drop_all()
-        db.create_all()
-        
         # Create mock students
         students = [
             Student(username="john", name="John Smith"),
