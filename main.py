@@ -288,7 +288,7 @@ def test_data():
                 result.append(f"    - Document: {doc.file_type}")
     
     return "<br>".join(result)
-
+ 
 @app.route("/debug/submissions")
 def debug_submissions():
     result = []
@@ -317,6 +317,7 @@ def handle_contact():
         # Debug info to console
         print(f"Form submission: {name}, {email}, {institution}, {institution_type}")
 
+ 
         # Validate form data
         if not all([name, email, message]):
             flash("Please fill in all required fields", "danger")
@@ -401,7 +402,7 @@ def extract_pdf_content(pdf_input):
     return out
 
 def analyze_text(text):
-    client = Client("yuchuantian/AIGC_text_detector")
+    client = Client("yuchuantian/AIGC_text_detector_env3")
     result = client.predict(
 		text,
 		api_name="/predict_en3")
