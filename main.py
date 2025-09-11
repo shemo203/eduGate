@@ -402,9 +402,10 @@ def extract_pdf_content(pdf_input):
     return out
 
 def analyze_text(text):
-    client = Client("yuchuantian/AIGC_text_detector_env3")
+    client = Client("yuchuantian/AIGC_text_detector")
     result = client.predict(
-		text)
+		text,
+		api_name="/predict_en3")
     return result
 
 
