@@ -1,2 +1,2 @@
-release: python -m flask db upgrade && python mock_data.py
+release: python -m flask db upgrade
 web: gunicorn main:app

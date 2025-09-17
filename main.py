@@ -54,7 +54,7 @@ class Student(UserMixin, db.Model):
     __tablename__ = 'student'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     submissions = db.relationship('Submission', backref='student')
 
@@ -74,7 +74,7 @@ class Admin(UserMixin, db.Model):
     __tablename__ = 'admin'
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64), unique = True, nullable = False)
-    password_hash = db.Column(db.String(255))
+    password_hash = db.Column(db.String(256))
     name = db.Column(db.String(50), nullable = False)
     submissions = db.relationship('Submission', backref='admin')
 

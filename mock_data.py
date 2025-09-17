@@ -4,12 +4,12 @@ import random
 
 def create_mock_data():
     with app.app_context():
-        print("Clearing existing data...")
-        Document.query.delete()                    # 1. Documents first
-        db.session.execute(db.text("DELETE FROM submissionDocument"))  # 2. Junction table
+        print("Clearing existing data...")        # 1. Documents first
+        SubmissionDocument.query.delete()
+        Document.query.delete()              # 2. Junction table
         Submission.query.delete()                  # 3. Submissions (references students)
         Student.query.delete()                     # 4. Students (now safe to delete)
-        Admin.query.delete()                       # 5. Admins
+        Admin.query.delete()                      
         
         db.session.commit()
         # Create mock students
