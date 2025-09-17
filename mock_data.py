@@ -4,22 +4,46 @@ import random
 
 def create_mock_data():
     with app.app_context():
+        print("Clearing existing data...")
+        Student.query.delete()
+        Admin.query.delete()
+        Submission.query.delete()
+        Document.query.delete()
+        # Clear junction table if it exists
+        db.session.execute(db.text("DELETE FROM submissionDocument"))
+        db.session.commit()
         # Create mock students
         students = [
-            Student(username="john", name="John Smith"),
-            Student(username="emma", name="Emma Johnson"),
-            Student(username="michael", name="Michael Brown"),
-            Student(username="sarah", name="Sarah Davis"),
-            Student(username="david", name="David Wilson")
+            Student(username="Steve", name="Steve"),
+            Student(username="Josh", name="Josh"),
+            Student(username="Ashley", name="Ashley"),
+            Student(username="Beyonce", name="Beyonce"),
+            Student(username="Justin", name="Justin"),
+            Student(username="Ye", name="Ye"),
+            Student(username="Marshall", name="Marshall"),
+            Student(username="Benjamin", name="Benjamin"),
+            Student(username="Erik", name="Erik"),
+            Student(username="Julia", name="Julia"),
+            Student(username="Alice", name="Alice"),
+            Student(username="Sofia", name="Sofia"),
+            Student(username="Sten", name="Sten"),
+            Student(username="Axel", name="Axel"),
+            Student(username="Oscar", name="Oscar"),
+            Student(username="Sixten", name="Sixten"),
+            Student(username="Alicia", name="Alicia"),
+            Student(username="Meghan", name="Meghan"),
+            Student(username="Marcus", name="Marcus"),
+            Student(username="Stefan", name="Stefan"),
+            Student(username="Lukas", name="Lukas"),
+            Student(username="Linnea", name="Linnea"),
+            Student(username="Jonathan", name="Jonathan")
         ]
         for student in students:
             student.set_password("testpass")  # All students have the same password for testing
         
         # Create mock admins
         admins = [
-            Admin(username="robert", name="Dr. Robert Anderson"),
-            Admin(username="lisa", name="Prof. Lisa Martinez"),
-            Admin(username="james", name="Dr. James Thompson")
+            Admin(username="Daniel", name="Daniel"),
         ]
         
         for admin in admins:
