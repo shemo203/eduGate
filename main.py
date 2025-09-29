@@ -405,7 +405,7 @@ def analyze_text(text):
     client = Client("yuchuantian/AIGC_text_detector")
     result = client.predict(
 		text,
-		api_name="/predict_en5")
+		api_name="/predict_en")
     return result
 
 
