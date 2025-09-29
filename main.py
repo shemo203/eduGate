@@ -74,7 +74,7 @@ class Admin(UserMixin, db.Model):
     __tablename__ = 'admin'
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64), unique = True, nullable = False)
-    password_hash = db.Column(db.String(256))
+    password_hash = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(50), nullable = False)
     submissions = db.relationship('Submission', backref='admin')
 
@@ -405,7 +405,7 @@ def analyze_text(text):
     client = Client("yuchuantian/AIGC_text_detector")
     result = client.predict(
 		text,
-		api_name="/predict_en3_short")
+		api_name="/predict_en5")
     return result
 
 
