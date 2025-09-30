@@ -12,7 +12,7 @@ def create_mock_data():
         Admin.query.delete()                      
         
         db.session.commit()
-        # Create mock students
+
         students = [
             Student(username="Steve", name="Steve"),
             Student(username="Josh", name="Josh"),
@@ -39,16 +39,14 @@ def create_mock_data():
             Student(username="Jonathan", name="Jonathan")
         ]
         for student in students:
-            student.set_password("testpass")  # All students have the same password for testing
-        
-        # Create mock admins
+            student.set_password("testpass") 
+    
         admins = [
             Admin(username="Daniel", name="Daniel"),
         ]
         
         for admin in admins:
-            admin.set_password("adminpass")  # All admins have
-        
+            admin.set_password("adminpass")  
         db.session.add_all(students)
         db.session.add_all(admins)
     

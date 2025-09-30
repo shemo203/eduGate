@@ -375,7 +375,7 @@ def submit_file(submission_id):
         text = extract_pdf_content(file.filename)
         ai = analyze_text(text)
         print(ai)
-        if ai[0] == "AI":
+        if float(ai[1]) >= 0.999:
             return render_template("aisubmitpage.html", message = ai[1], submission_id = submission_id)
         else:
             document = Document(
@@ -405,7 +405,7 @@ def analyze_text(text):
     client = Client("yuchuantian/AIGC_text_detector")
     result = client.predict(
 		text,
-		api_name="/predict_en")
+		api_name="/predict_en3")
     return result
 
 
