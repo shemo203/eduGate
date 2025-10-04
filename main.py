@@ -4,6 +4,7 @@ from waitress import serve
 from transformers import pipeline
 import pymupdf
 import requests
+import re
 from gradio_client import Client
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -373,25 +374,74 @@ def submit_file(submission_id):
         
         file.save(os.path.join(UPLOAD_FOLDER, file.filename))
         text = extract_pdf_content(file.filename)
-        ai = analyze_text(text)
-        print(ai)
-        if float(ai[1]) >= 0.999:
-            return render_template("aisubmitpage.html", message = ai[1], submission_id = submission_id)
-        else:
+        result = analyze_text(text)
+        unchecked_chunks = paragraph_chunker(text)
+        annotated_chunks = annotate_chunks(unchecked_chunks)
+        if float(result[1]) <= 0.99962:
             document = Document(
             file_type=file.filename.split('.')[-1],
             size=os.path.getsize(os.path.join(UPLOAD_FOLDER, file.filename)),
             file_name=file.filename
             )
-            submission.score = ai[1]
+            submission.score = 0
             submission.documents.append(document)
             db.session.add(document)
             db.session.commit()
             flash("Document submitted sucessfully!", "success")
             return redirect (url_for('submissions_page'))
+        elif float(result[1]) > 0.99962:
+            print(f"\n=== ANALYZING {len(annotated_chunks)} CHUNKS ===")
+            for i, chunk in enumerate(annotated_chunks):
+                print(f"Chunk {i+1}: {chunk['band']} (score: {chunk['raw_score']:.6f}) (word_count: {chunk['word_count']})")
+                print(f"Text: {chunk['chunk'][:100]}...")
+                print("-" * 50)
+            detection_message = []
+            for chunk in annotated_chunks:
+                if chunk["band"] == "red" or chunk["band"] == "yellow":
+                    detection_message.append(chunk["chunk"])
+            return render_template("aisubmitpage.html", message = detection_message, submission_id = submission_id)
     except Exception as e:
         flash(f"An error occured during submission: {str(e)}", "danger")
         return redirect(request.url)
+
+   
+def paragraph_chunker(text, word_limit=300):
+    paragraphs = text.split('\n\n')
+    chunks = []
+    
+    for paragraph in paragraphs:
+        if len(paragraph.split()) < word_limit:
+            print(paragraph.split())
+            chunks.append(paragraph)
+        else:
+            words = paragraph.split()
+            for i in range(0, len(words), word_limit):
+                chunk_words = words[i:i + word_limit]
+                chunk_text = ' '.join(chunk_words)
+                chunks.append(chunk_text)
+    
+    print(f"Created {len(chunks)} chunks")
+    return chunks
+
+
+
+def annotate_chunks(chunks):
+    #input list of chunks [yadadada,dadada,dadadad]
+    annotated_chunks = []
+    for chunk in chunks:
+        result = analyze_text(chunk)
+        temp = {"chunk" : chunk, 
+                "raw_score": float(result[1]),
+                "word_count" : len(chunk.split())}
+        
+        if temp["raw_score"] >= 0.99962:
+            temp.update({"band": "red"})
+        elif 0.99960 <= temp["raw_score"] < 0.99962 : #Small epsilon around cutoffs epsilon = 0.00002
+            temp.update({"band": "yellow"})
+        elif temp["raw_score"] < 0.99960:
+            temp.update({"band": "green"})
+        annotated_chunks.append(temp)
+    return annotated_chunks
 
 
 def extract_pdf_content(pdf_input):
@@ -405,7 +455,7 @@ def analyze_text(text):
     client = Client("yuchuantian/AIGC_text_detector")
     result = client.predict(
 		text,
-		api_name="/predict_en3")
+		api_name="/predict_en")
     return result
 
 
