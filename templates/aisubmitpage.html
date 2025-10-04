@@ -19,10 +19,14 @@
             </div>
             <div class="card-body">
               <div class="alert alert-info border-primary" role="alert" style="background-color: #e0eafc; color: #003366;">
-                <strong>Notice:</strong> Our system detected AI-generated content in your submission.
+                <strong>Notice:</strong> Our system detected AI-generated content in your submission. Please review following text and resubmit.
               </div>
               <p class="mb-3">
-                <strong>AI Score:</strong> {{ message }}
+                <strong>AI-enriched text</strong>
+                {% for text in message %}
+                  {{ text }}
+                  <br><br>
+                {% endfor %}
               </p>
               <a href="{{ url_for('submissions_page') }}" class="btn btn-outline-primary">Back to Submissions</a>
               <a href="{{ url_for('view_submission', submission_id=submission_id) }}" class="btn btn-primary ms-2">Submit Another File</a>
