@@ -1,6 +1,6 @@
 # eduGate
 
-Assignment submission system with AI-generated content detection. Built as a hobby project, launched July 2025.
+Assignment submission platform (frontend + backend + database) with AI-generated content detection. Built as a hobby project, launched July 2025.
 
 
 ## What it does
