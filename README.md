@@ -2,6 +2,8 @@
 
 Assignment submission system with AI-generated content detection. Built for a university course project, launched July 2025.
 
+![Student submission page](screenshots/submit.png)
+
 ## What it does
 
 Students submit PDF assignments, the system checks them against a Hugging Face AIGC detector model. If the initial score is suspicious, it breaks the document into paragraphs and scores each chunk separately — helps pinpoint which sections might be AI-generated instead of flagging the whole thing.
@@ -38,11 +40,13 @@ cp .env.example .env
 # init database
 flask db upgrade
 
+# run
+python main.py
+```
 
+## Project structure
 
-31 x 22
-Project structure
-
+```
 eduGate/
 ├── main.py           # routes, models, detection logic
 ├── templates/        # jinja2 templates
@@ -50,17 +54,22 @@ eduGate/
 ├── uploads/          # submitted files
 ├── tests/            # api tests, load testing
 └── migrations/       # alembic migrations
+```
 
-Testing
-There's a test suite under tests/ — includes accuracy testing against labeled datasets and a concurrent login stress test (30 users).
+## Testing
+
+There's a test suite under `tests/` — includes accuracy testing against labeled datasets and a concurrent login stress test (30 users).
+
+```bash
 python -m pytest tests/ -v
+```
 
-Notes
-Detection accuracy depends heavily on the threshold — there's always a tradeoff between false positives (flagging human text) and false negatives (missing AI text)
-The chunking approach helps but isn't perfect
-Tested with Waitress and Gunicorn for production
+## Notes
 
+- Detection accuracy depends heavily on the threshold — there's always a tradeoff between false positives (flagging human text) and false negatives (missing AI text)
+- The chunking approach helps but isn't perfect
+- Tested with Waitress and Gunicorn for production
 
+## Contact
 
-# run
-python main.py
+Questions? eduGate.se@gmail.com
