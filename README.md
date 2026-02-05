@@ -57,18 +57,15 @@ eduGate/
 
 ## Testing
 
-There's a test suite under `tests/` — includes accuracy testing against labeled datasets and a concurrent login stress test (30 users).
+There's a test suite under `tests/`, includes accuracy testing against labeled datasets and a concurrent login stress test (30 users).
 
 ```bash
 python -m pytest tests/ -v
 ```
 
 ## Notes
-
-- Detection accuracy depends heavily on the threshold — there's always a tradeoff between false positives (flagging human text) and false negatives (missing AI text)
+- Detection accuracy depends on the AI detection API — currently using Hugging Face's AIGC detector (might be outdated), but the system is built so you can swap in any API
+- Detection accuracy depends heavily on the threshold, there's always a tradeoff between false positives (flagging human text) and false negatives (missing AI text)
 - The chunking approach helps but isn't perfect
 - Tested with Waitress and Gunicorn for production
 
-## Contact
-
-Questions? eduGate.se@gmail.com
