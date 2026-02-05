@@ -1,12 +1,11 @@
 # eduGate
 
-Assignment submission system with AI-generated content detection. Built for a university course project, launched July 2025.
+Assignment submission system with AI-generated content detection. Built as a hobby project, launched July 2025.
 
-![Student submission page](screenshots/submit.png)
 
 ## What it does
 
-Students submit PDF assignments, the system checks them against a Hugging Face AIGC detector model. If the initial score is suspicious, it breaks the document into paragraphs and scores each chunk separately — helps pinpoint which sections might be AI-generated instead of flagging the whole thing.
+Students submit PDF assignments, the system proactively checks them against a Hugging Face AIGC detector model. If the initial score is suspicious, it breaks the document into paragraphs and scores each chunk separately, helps pinpoint which sections might be AI-generated instead of flagging the whole thing.
 
 Admins can create assignments, set deadlines, and see all submissions with their scores.
 
