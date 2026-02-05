@@ -1,152 +1,66 @@
-# eduGate - AI-Powered Assignment Submission System launched 31 July 2025
+# eduGate
 
-A Flask-based web application for managing student assignments with AI-powered plagiarism detection.
+Assignment submission system with AI-generated content detection. Built for a university course project, launched July 2025.
 
-## 🚀 Features
+## What it does
 
-- **Student Portal**: Submit assignments and view submission history
-- **Admin Dashboard**: Create assignments, manage students, and view all submissions
-- **AI Detection**: Uses Hugging Face models to detect AI-generated content
-- **File Management**: Secure PDF upload and storage system
-- **User Authentication**: Separate login systems for students and admins
+Students submit PDF assignments, the system checks them against a Hugging Face AIGC detector model. If the initial score is suspicious, it breaks the document into paragraphs and scores each chunk separately — helps pinpoint which sections might be AI-generated instead of flagging the whole thing.
 
+Admins can create assignments, set deadlines, and see all submissions with their scores.
 
-## 🛠️ Installation
+## Tech
 
-### Prerequisites
-- Python 3.8+
-- pip
-- Virtual environment (recommended)
+- Flask + PostgreSQL
+- Hugging Face model (`yuchuantian/AIGC_text_detector`) via Gradio API
+- Flask-Login for auth (separate student/admin roles)
+- PyMuPDF for PDF text extraction
+- Alembic for database migrations
 
-### Setup
+## Detection approach
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd eduGate
-   ```
+1. Extract text from uploaded PDF
+2. Run full document through detector
+3. If score > threshold → chunk into paragraphs (~300 words each)
+4. Score each chunk, classify as red/yellow/green
+5. Show student which sections were flagged
 
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+The threshold (0.99962) was tuned by testing against a mix of human-written and ChatGPT-generated texts.
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Setup
 
-4. **Set environment variables**
-   ```bash
-   export SECRET_KEY="your-secret-key-here"
-   export DATABASE_URL="your-database-url"
-   export FLASK_ENV="production"
-   ```
-
-5. **Initialize database**
-   ```bash
-   python -c "from main import db; db.create_all()"
-   ```
-
-## 🧪 Testing
-
-### Run all tests
 ```bash
-python -m pytest test_app.py -v
-```
+pip install -r requirements.txt
 
-### Run specific test categories
-```bash
-# Unit tests
-python -m pytest test_app.py::EduGateTestCase::test_database_models -v
+# set up environment
+cp .env.example .env
+# edit .env with your DATABASE_URL, SECRET_KEY, mail settings
 
-# Integration tests
-python -m pytest test_app.py::EduGateTestCase::test_student_login -v
+# init database
+flask db upgrade
 
-# Security tests
-python -m pytest test_app.py::EduGateTestCase::test_file_upload_security -v
-```
 
-## 🚀 Deployment
 
-### Development
-```bash
-export FLASK_ENV=development
-python main.py
-```
+31 x 22
+Project structure
 
-### Production
-```bash
-export FLASK_ENV=production
-gunicorn -w 4 -b 0.0.0.0:8000 main:app
-```
-
-### Using Waitress (Windows)
-```bash
-waitress-serve --host=0.0.0.0 --port=8000 main:app
-```
-
-## 📁 Project Structure
-
-```
 eduGate/
-├── main.py              # Main Flask application
-├── config.py            # Configuration settings
-├── requirements.txt     # Python dependencies
-├── test_app.py         # Test suite
-├── templates/          # HTML templates
-├── static/            # CSS, JS, images
-├── uploads/           # File upload directory
-├── outputs/           # AI analysis outputs
-└── instance/          # Database files
-```
+├── main.py           # routes, models, detection logic
+├── templates/        # jinja2 templates
+├── static/           # css
+├── uploads/          # submitted files
+├── tests/            # api tests, load testing
+└── migrations/       # alembic migrations
 
-## 🔧 Configuration
+Testing
+There's a test suite under tests/ — includes accuracy testing against labeled datasets and a concurrent login stress test (30 users).
+python -m pytest tests/ -v
 
-### Environment Variables
-- `SECRET_KEY`: Flask secret key for sessions
-- `DATABASE_URL`: Production database URL
-- `FLASK_ENV`: Environment (development/production)
-- `UPLOAD_FOLDER`: File upload directory
-- `MAX_CONTENT_LENGTH`: Maximum file upload size
+Notes
+Detection accuracy depends heavily on the threshold — there's always a tradeoff between false positives (flagging human text) and false negatives (missing AI text)
+The chunking approach helps but isn't perfect
+Tested with Waitress and Gunicorn for production
 
-### Security Settings
-- File type validation (PDF only)
-- File size limits (16MB)
-- Session security
-- CSRF protection
 
-## 🐛 Troubleshooting
 
-### Common Issues
-
-1. **Database errors**
-   ```bash
-   python -c "from main import db; db.create_all()"
-   ```
-
-2. **Import errors**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Permission errors**
-   ```bash
-   chmod 755 uploads/ outputs/
-   ```
-
-## 📞 Support
-
-For issues and questions email eduGate.se@gmail.com:
-- Check the troubleshooting section
-- Review error logs
-- Test with the provided test suite
-
-## 🔒 Security Notes
-
-- Always use HTTPS in production
-- Regularly update dependencies
-- Monitor file uploads for malicious content
-- Implement rate limiting for production
-- Set up proper logging and monitoring
+# run
+python main.py
